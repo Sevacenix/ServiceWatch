@@ -1,0 +1,13 @@
+.build/
+.swiftpm/
+dist/
+.DS_Store
+*.xcuserstate
+xcuserdata/
+*.sqlite*
+authorizations*.json
+*.app/
+*.dmg
+*.zip
+Assets/AppIcon/AppIcon.icns
+Assets/AppIcon/AppIcon-1024.png

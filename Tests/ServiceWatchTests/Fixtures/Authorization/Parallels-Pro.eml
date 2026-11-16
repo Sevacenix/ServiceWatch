@@ -1,0 +1,27 @@
+Subject: =?UTF-8?B?UGFyYWxsZWxzIERlc2t0b3AgUHJvIEVkaXRpb24=?=
+From: receipt@example.invalid
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="sample"
+
+--sample
+Content-Type: multipart/alternative; boundary="body"
+
+--body
+Content-Type: text/html; charset=UTF-8
+
+<p>Parallels Desktop Pro Edition</p><p>Promotion expires June 01, 2026.</p>
+--body
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Your subscription is valid until February =
+18, 2027.
+Next billing date: February 14, 2027.
+License key: EXAMPLE-NOTREAL-0000
+--body--
+--sample
+Content-Type: text/plain; charset=UTF-8; name="attachment.txt"
+Content-Disposition: attachment; filename="attachment.txt"
+
+Subscription expires on March 31, 2099.
+--sample--
