@@ -1,13 +1,11 @@
-# 续期 · ServiceWatch 0.1.0
+# 续期 · ServiceWatch 0.1.1
 
-首次公开发布。适用于 Apple Silicon Mac，macOS 14 或更新版本。
+适用于 Apple Silicon Mac，macOS 14 或更新版本。
 
-- 以空白授权列表和报价历史启动。在「使用向导」可查看虚构样例。
-- 支持手动记录服务与扣款日期，从 EML、邮件正文或截图提取授权草稿，并在核对后保存。
-- 从公开目录查询报价，查看同套餐、同渠道和同币种的历史最低、年度最低和 618、双 11、黑五最低观测价。
-- 数据保存在本机。自动目录更新默认关闭，可在「数据源与更新」开启。
+- 从本版起采用 [MIT 许可](https://github.com/Sevacenix/ServiceWatch/blob/v0.1.1/LICENSE)，版权署名为 `Copyright (c) 2026 Sevacenix`。App 的「关于续期」显示许可和署名，安装包内随附完整许可文本。
+- [v0.1.0](https://github.com/Sevacenix/ServiceWatch/releases/tag/v0.1.0) 继续采用发布时的 0BSD 许可。
 
-Initial open-source release. Includes local subscription and license tracking, reviewed email or screenshot imports, deal history, and fictional examples. See the README for installation and the data notes for storage and network behavior.
+The MIT license applies starting with v0.1.1, with copyright attributed to Sevacenix. The About panel displays the notice, and the app bundle includes the full license text. The original v0.1.0 release remains under 0BSD.
 
 ## 安装与首次打开 / Installation and first launch
 

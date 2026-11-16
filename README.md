@@ -17,10 +17,10 @@ Open **续期 Open**, add a service manually or review an imported email or scre
 
 ### 首次打开与 macOS 提示 / First launch on macOS
 
-`v0.1.0` 使用 ad-hoc 签名，尚未通过 Apple 公证。下载后可运行以下命令，将输出的哈希与同一发布页的 `SHA256SUMS.txt` 对应行比较。下载 ZIP 时改用 ZIP 文件名。
+当前安装包使用 ad-hoc 签名，尚未通过 Apple 公证。下载后可运行以下命令，将输出的哈希与同一发布页的 `SHA256SUMS.txt` 对应行比较。按实际版本和文件类型替换文件名。
 
 ```sh
-shasum -a 256 ServiceWatch-0.1.0-macOS-arm64.dmg
+shasum -a 256 ServiceWatch-0.1.1-macOS-arm64.dmg
 ```
 
 若首次打开时出现「无法验证开发者」或 Apple 无法检查该 App 的提示，先确认文件来自本仓库的发布页且校验值相符。如果你选择信任这份安装包：
@@ -59,4 +59,6 @@ The packaging script puts local artifacts in the dist directory. See the data no
 
 欢迎提交 issue，注明 macOS 版本、应用版本、复现步骤和预期结果。请使用虚构或已脱敏的样例附件。
 
-源代码及本项目创作的样例以 [0BSD](LICENSE) 发布。在线报价、品牌标识与商家页面由相应来源提供。
+自 `v0.1.1` 起，源代码及本项目创作的样例采用 [MIT 许可](LICENSE)，版权署名为 `Copyright (c) 2026 Sevacenix`。[v0.1.0](https://github.com/Sevacenix/ServiceWatch/tree/v0.1.0) 继续采用发布时的 0BSD 许可。在线报价、品牌标识与商家页面由相应来源提供。
+
+Source code and project-created examples are licensed under MIT starting with `v0.1.1`. The original `v0.1.0` release remains under 0BSD.

@@ -13,7 +13,7 @@ import Foundation
             .applicationName: "续期",
             .applicationVersion: displayVersion,
             .version: Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "开发构建",
-            .credits: NSAttributedString(string: "网络服务与软件授权，本机管理。\nServiceWatch · 0BSD")
+            .credits: NSAttributedString(string: "网络服务与软件授权，本机管理。\nServiceWatch · MIT License\nCopyright (c) 2026 Sevacenix")
         ]
         if let image = icon ?? NSApp.applicationIconImage { options[.applicationIcon] = image }
         NSApp.orderFrontStandardAboutPanel(options: options)

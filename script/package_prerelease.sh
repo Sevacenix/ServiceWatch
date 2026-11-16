@@ -2,8 +2,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BUILD_NUMBER="1"
-VERSION="0.1.0"
+BUILD_NUMBER="2"
+VERSION="0.1.1"
 APP_NAME="续期 Open"
 BUNDLE_NAME="$APP_NAME.app"
 BUNDLE_ID="com.sevacenix.ServiceWatch.Open"
@@ -44,7 +44,7 @@ cat > "$APP_BUNDLE/Contents/Info.plist" <<PLIST
 <key>CFBundleName</key><string>续期</string>
 <key>CFBundleDisplayName</key><string>$APP_NAME</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleShortVersionString</key><string>0.1.0</string>
+<key>CFBundleShortVersionString</key><string>$VERSION</string>
 <key>CFBundleVersion</key><string>$BUILD_NUMBER</string>
 <key>ServiceWatchDisplayVersion</key><string>$VERSION</string>
 <key>ServiceWatchReleaseChannel</key><string>Open</string>
