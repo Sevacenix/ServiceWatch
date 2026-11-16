@@ -14,6 +14,7 @@ fi
 swift build
 BUILD_BINARY="$(swift build --show-bin-path)/$APP_NAME"
 mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources"
+cp -X Sources/ServiceWatch/Resources/English.json "$APP_BUNDLE/Contents/Resources/English.json"
 cp -X "$BUILD_BINARY" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 if [[ -f Assets/AppIcon/AppIcon.icns ]]; then
   cp -X Assets/AppIcon/AppIcon.icns "$APP_BUNDLE/Contents/Resources/AppIcon.icns"

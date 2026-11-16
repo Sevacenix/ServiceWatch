@@ -18,7 +18,7 @@ actor CatalogEngine {
     }
     func setDailyEnabled(_ enabled: Bool) throws { try database.setSetting("daily_enabled", enabled ? "true" : "false") }
     private func fetch(_ url: URL) async throws -> FetchedCatalogPage {
-        guard CatalogSource.allowed(url), !denied.contains(where: { url.path.hasPrefix($0) }) else { throw CatalogError.invalid("robots规则不允许读取该页面。") }
+        guard CatalogSource.allowed(url), !denied.contains(where: { url.path.hasPrefix($0) }) else { throw CatalogError.invalid(tr("robots规则不允许读取该页面。")) }
         if let text = try database.setting("retry_after"), let value = Double(text), value > Date().timeIntervalSince1970 {
             throw CatalogError.retryAfter(Date(timeIntervalSince1970: value))
         }
@@ -40,7 +40,7 @@ actor CatalogEngine {
             if parts[0].lowercased() == "user-agent" { applies = parts[1] == "*" }
             if applies && parts[0].lowercased() == "disallow" && !parts[1].isEmpty { rules.append(parts[1]) }
         }
-        guard page.cache.body.lowercased().contains("user-agent:") else { throw CatalogError.invalid("无法确认站点robots规则，暂停同步。") }
+        guard page.cache.body.lowercased().contains("user-agent:") else { throw CatalogError.invalid(tr("无法确认站点robots规则，暂停同步。")) }
         denied = rules
         robotsDay = CatalogSource.day(now)
         try database.saveCache(url, page.cache)
@@ -58,7 +58,7 @@ actor CatalogEngine {
             products += try CatalogParser.directory(page.cache.body).products
             pages.append((url, page))
         }
-        guard Set(products.map(\.path)).count == products.count else { throw CatalogError.invalid("分页产品重复，保留上次完整目录。") }
+        guard Set(products.map(\.path)).count == products.count else { throw CatalogError.invalid(tr("分页产品重复，保留上次完整目录。")) }
         try database.replaceDirectory(products)
         for (url, page) in pages { try database.saveCache(url, page.cache) }
         return try database.products().filter(\.listed)
@@ -94,7 +94,7 @@ actor CatalogEngine {
     }
     func refreshProduct(path: String, trigger: CatalogTrigger, now: Date = Date()) async throws -> [CatalogOffer] {
         guard let current = try database.products().first(where: { $0.path == path && $0.listed }),
-              let run = try database.begin(trigger, now: now) else { throw CatalogError.invalid("请先更新并选择目录中的服务。") }
+              let run = try database.begin(trigger, now: now) else { throw CatalogError.invalid(tr("请先更新并选择目录中的服务。")) }
         do {
             try await ensureRobots(now: now)
             let result = try await product(current, run: run, now: now)
@@ -107,17 +107,17 @@ actor CatalogEngine {
     @discardableResult func refreshAll(trigger: CatalogTrigger, now: Date = Date(), progress: @Sendable (String) -> Void = { _ in }) async throws -> String {
         guard !updatingAll else { throw CatalogError.busy }
         if trigger == .daily {
-            if try database.setting("daily_enabled") != "true" { return "每日自动更新已关闭。" }
+            if try database.setting("daily_enabled") != "true" { return tr("每日自动更新已关闭。") }
         }
-        guard let run = try database.begin(trigger, now: now) else { return "今天的自动批次已尝试，未重复联网。" }
+        guard let run = try database.begin(trigger, now: now) else { return tr("今天的自动批次已尝试，未重复联网。") }
         updatingAll = true
         defer { updatingAll = false }
         do {
-            progress("正在更新完整服务目录…")
+            progress(tr("正在更新完整服务目录…"))
             let products = try await directory(now: now)
             var success = 0, failed = 0, count = 0
             for (index, current) in products.enumerated() {
-                progress("核实方案 \(index + 1)/\(products.count) · \(current.name)")
+                progress(tr("核实方案 \(index + 1)/\(products.count) · \(current.name)"))
                 do { count += try await product(current, run: run, now: Date()).count; success += 1 }
                 catch {
                     failed += 1

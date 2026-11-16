@@ -26,9 +26,9 @@ struct ImportView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 HStack(alignment: .top) {
-                    PageHeading(title: "授权导入", subtitle: "从邮件或截图识别服务、等级与有效期。核对后再保存。")
+                    PageHeading(title: tr("授权导入"), subtitle: tr("从邮件或截图识别服务、等级与有效期。核对后再保存。"))
                     if inSheet {
-                        Button("关闭") { store.showingImport = false }.keyboardShortcut(.cancelAction)
+                        Button(tr("关闭")) { store.showingImport = false }.keyboardShortcut(.cancelAction)
                     }
                 }
                 if let error {
@@ -39,15 +39,15 @@ struct ImportView: View {
                 if operation != nil {
                     HStack(spacing: 12) {
                         ProgressView().controlSize(.small)
-                        Text("正在本机读取和识别…")
-                        Button("取消") { cancelOperation() }
+                        Text(tr("正在本机读取和识别…"))
+                        Button(tr("取消")) { cancelOperation() }
                     }.padding(.vertical, 20)
                 } else if let recognition, let binding = Binding($draft) {
                     review(recognition, draft: binding)
                 } else {
                     intake
                 }
-                Label("仅在本机处理。保存已确认字段和来源类型，不保存邮件、图片或识别全文。", systemImage: "lock.shield")
+                Label(tr("仅在本机处理。保存已确认字段和来源类型，不保存邮件、图片或识别全文。"), systemImage: "lock.shield")
                     .font(.caption).foregroundStyle(.secondary)
             }
             .padding(28).frame(maxWidth: 1100, alignment: .leading).frame(maxWidth: .infinity)
@@ -60,11 +60,11 @@ struct ImportView: View {
         VStack(alignment: .leading, spacing: 18) {
             VStack(spacing: 13) {
                 Image(systemName: "doc.viewfinder").font(.system(size: 35)).foregroundStyle(.tint)
-                Text("拖入一封邮件或一张截图").font(.title3.weight(.semibold))
-                Text(".eml 或 PNG、JPEG、HEIC、TIFF").font(.caption).foregroundStyle(.secondary)
+                Text(tr("拖入一封邮件或一张截图")).font(.title3.weight(.semibold))
+                Text(tr(".eml 或 PNG、JPEG、HEIC、TIFF")).font(.caption).foregroundStyle(.secondary)
                 HStack {
-                    Button("选择文件…", action: chooseFile).buttonStyle(.borderedProminent)
-                    Button("粘贴截图") { pasteImage() }
+                    Button(tr("选择文件…"), action: chooseFile).buttonStyle(.borderedProminent)
+                    Button(tr("粘贴截图")) { pasteImage() }
                 }
             }
             .frame(maxWidth: .infinity).padding(24)
@@ -73,29 +73,29 @@ struct ImportView: View {
             .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(.secondary.opacity(0.35), style: StrokeStyle(dash: [6, 4])))
             .dropDestination(for: URL.self) { urls, _ in
                 guard urls.count == 1, let url = urls.first, url.isFileURL else {
-                    error = "每次请选择一个本地邮件或截图。"
+                    error = tr("每次请选择一个本地邮件或截图。")
                     return false
                 }
                 open(url)
                 return true
             } isTargeted: { dropActive = $0 }
-            Surface(title: "粘贴邮件正文") {
+            Surface(title: tr("粘贴邮件正文")) {
                 TextEditor(text: $pastedText)
                     .font(.callout).frame(minHeight: 100)
                     .overlay(alignment: .topLeading) {
                         if pastedText.isEmpty {
-                            Text("例如：产品名称、授权等级和明确到期日")
+                            Text(tr("例如：产品名称、授权等级和明确到期日"))
                                 .foregroundStyle(.tertiary).padding(6).allowsHitTesting(false)
                         }
                     }
-                    .accessibilityLabel("邮件正文")
-                Button("识别邮件正文") {
+                    .accessibilityLabel(tr("邮件正文"))
+                Button(tr("识别邮件正文")) {
                     let text = pastedText
                     start { ImportDocument(text: text) }
                 }
                 .disabled(pastedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || pastedText.count > ImportInput.textLimit)
                 if pastedText.count > ImportInput.textLimit {
-                    Text("正文过长，请只粘贴与授权有关的段落。").font(.caption).foregroundStyle(.orange)
+                    Text(tr("正文过长，请只粘贴与授权有关的段落。")).font(.caption).foregroundStyle(.orange)
                 }
             }
         }
@@ -109,41 +109,41 @@ struct ImportView: View {
         let validation = Result { try store.prepareImport(current) }
         return VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Label(result.origin.rawValue + " · 核对识别结果", systemImage: "checklist")
+                Label(L10n.label(result.origin.rawValue) + tr(" · 核对识别结果"), systemImage: "checklist")
                     .font(.headline)
                 Spacer()
-                Button("重新导入") { clearReview() }
+                Button(tr("重新导入")) { clearReview() }
             }
             if result.ambiguousService {
-                Text("材料中出现多个服务名，请选择对应服务。").font(.callout).foregroundStyle(.orange)
+                Text(tr("材料中出现多个服务名，请选择对应服务。")).font(.callout).foregroundStyle(.orange)
             }
             if result.candidates.count > 1 {
-                Picker("识别到的授权", selection: Binding(get: { candidateID }, set: { id in
+                Picker(tr("识别到的授权"), selection: Binding(get: { candidateID }, set: { id in
                     if let item = result.candidates.first(where: { $0.id == id }) { select(item, from: result) }
                 })) {
                     ForEach(result.candidates) { item in
-                        Text("\(item.tier.isEmpty ? "等级待确认" : item.tier) · \(item.perpetual ? "永久授权" : item.expiry ?? "日期待确认")")
+                        Text("\(item.tier.isEmpty ? tr("等级待确认") : item.tier) · \(item.perpetual ? tr("永久授权") : item.expiry ?? tr("日期待确认"))")
                             .tag(Optional(item.id))
                     }
                 }
-                Text("每次保存一条；可切换候选结果继续核对。").font(.caption).foregroundStyle(.secondary)
+                Text(tr("每次保存一条；可切换候选结果继续核对。")).font(.caption).foregroundStyle(.secondary)
             }
             if matchingDates > 1 {
-                Label("同一等级识别到多个有效期，请核对当前生效的日期。", systemImage: "exclamationmark.triangle")
+                Label(tr("同一等级识别到多个有效期，请核对当前生效的日期。"), systemImage: "exclamationmark.triangle")
                     .font(.callout).foregroundStyle(.orange)
             }
-            Surface(title: "原文依据 · 已隐藏常见敏感内容") {
-                Text(candidate.flatMap { $0.evidence.isEmpty ? nil : $0.evidence } ?? "没有提取到明确的授权依据。")
+            Surface(title: tr("原文依据 · 已隐藏常见敏感内容")) {
+                Text(candidate.flatMap { $0.evidence.isEmpty ? nil : $0.evidence } ?? tr("没有提取到明确的授权依据。"))
                     .font(.callout).textSelection(.enabled)
-                DisclosureGroup("查看识别文本") {
+                DisclosureGroup(tr("查看识别文本")) {
                     ScrollView {
-                        Text(result.excerpt.isEmpty ? "无可显示内容" : result.excerpt)
+                        Text(result.excerpt.isEmpty ? tr("无可显示内容") : result.excerpt)
                             .font(.caption).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
                     }.frame(maxHeight: 140)
                 }
             }
-            Surface(title: "核对并保存") {
-                Picker("保存到服务", selection: Binding(get: { current.serviceID }, set: { id in
+            Surface(title: tr("核对并保存")) {
+                Picker(tr("保存到服务"), selection: Binding(get: { current.serviceID }, set: { id in
                     let chosen = personalServices.first { $0.id == id }
                     value.wrappedValue.serviceID = id
                     value.wrappedValue.serviceName = chosen?.name ?? result.service ?? ""
@@ -152,43 +152,43 @@ struct ImportView: View {
                     value.wrappedValue.markPaid = chosen == nil
                     savedID = nil
                 })) {
-                    Text("新增服务").tag(nil as Int?)
+                    Text(tr("新增服务")).tag(nil as Int?)
                     ForEach(personalServices) { service in Text(service.name).tag(Optional(service.id)) }
                 }
-                if service == nil { TextField("服务名称", text: value.serviceName) }
+                if service == nil { TextField(tr("服务名称"), text: value.serviceName) }
                 if let service, !service.entitlements.isEmpty {
-                    Picker("授权记录", selection: Binding(get: { current.target }, set: { target in
+                    Picker(tr("授权记录"), selection: Binding(get: { current.target }, set: { target in
                         value.wrappedValue = current.selection(target, in: service)
                         savedID = nil
                     })) {
-                        Text("请选择").tag(ImportTarget.choose)
-                        Text("新增等级").tag(ImportTarget.add)
+                        Text(tr("请选择")).tag(ImportTarget.choose)
+                        Text(tr("新增等级")).tag(ImportTarget.add)
                         ForEach(service.entitlements) { item in
-                            Text("更新 \(item.tier) · \(item.perpetual ? "永久" : item.expires ?? "待确认")")
+                            Text(tr("更新 \(item.tier) · \(item.perpetual ? "永久" : item.expires ?? tr("待确认"))"))
                                 .tag(ImportTarget.update(item.id))
                         }
                     }
                 }
-                TextField("服务等级", text: value.tier)
-                Picker("有效期", selection: value.validity) {
-                    ForEach(["有到期日", "永久授权", "待确认"], id: \.self) { Text($0) }
+                TextField(tr("服务等级"), text: value.tier)
+                Picker(tr("有效期"), selection: value.validity) {
+                    ForEach(["有到期日", "永久授权", "待确认"], id: \.self) { Text(L10n.label($0)) }
                 }.pickerStyle(.segmented)
                 if current.validity == "有到期日" {
-                    TextField("到期日（YYYY-MM-DD）", text: value.expiry)
+                    TextField(tr("到期日（YYYY-MM-DD）"), text: value.expiry)
                 } else if current.validity == "待确认" {
-                    Text("只显示天数、续费日或购买日期时，需核对实际到期日。")
+                    Text(tr("只显示天数、续费日或购买日期时，需核对实际到期日。"))
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 if service?.paid != true {
-                    Toggle("列为已开通", isOn: value.markPaid).font(.callout)
+                    Toggle(tr("列为已开通"), isOn: value.markPaid).font(.callout)
                 }
                 if let before = current.baseline {
-                    Fact(title: "将更新的授权",
-                         value: "\(before.tier) · \(before.perpetual ? "永久授权" : before.expires ?? "待确认") → \(current.cleanTier) · \(current.validitySummary)")
-                    Text("其他等级、实付金额和自动扣款设置保持原样。").font(.caption).foregroundStyle(.secondary)
+                    Fact(title: tr("将更新的授权"),
+                         value: "\(before.tier) · \(before.perpetual ? tr("永久授权") : before.expires ?? tr("待确认")) → \(current.cleanTier) · \(L10n.label(current.validitySummary))")
+                    Text(tr("其他等级、实付金额和自动扣款设置保持原样。")).font(.caption).foregroundStyle(.secondary)
                     if current.validity == "有到期日", let oldExpiry = before.expires,
                        current.validFields && current.cleanExpiry < oldExpiry {
-                        Text("导入日期早于现有到期日，请核对是否为历史记录。")
+                        Text(tr("导入日期早于现有到期日，请核对是否为历史记录。"))
                             .font(.caption).foregroundStyle(.orange)
                     }
                 }
@@ -197,16 +197,16 @@ struct ImportView: View {
                 }
                 if let savedID {
                     HStack {
-                        Label("已保存", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
-                        Button("查看授权记录") {
+                        Label(tr("已保存"), systemImage: "checkmark.circle.fill").foregroundStyle(.green)
+                        Button(tr("查看授权记录")) {
                             store.selectedID = savedID
                             store.destination = .services
                             store.showingImport = false
                         }
                     }.font(.callout)
                 } else {
-                    Toggle("我已核对服务、等级、到期日与保存目标", isOn: $confirmed).font(.callout)
-                    Button("保存此授权") {
+                    Toggle(tr("我已核对服务、等级、到期日与保存目标"), isOn: $confirmed).font(.callout)
+                    Button(tr("保存此授权")) {
                         do {
                             savedID = try store.saveImport(current)
                             confirmed = false
@@ -236,8 +236,8 @@ struct ImportView: View {
 
     private func chooseFile() {
         let panel = NSOpenPanel()
-        panel.message = "选择一封授权邮件或一张会员截图"
-        panel.prompt = "识别"
+        panel.message = tr("选择一封授权邮件或一张会员截图")
+        panel.prompt = tr("识别")
         panel.canChooseFiles = true
         panel.canChooseDirectories = false
         panel.allowsMultipleSelection = false
@@ -255,7 +255,7 @@ struct ImportView: View {
     private func pasteImage() {
         let board = NSPasteboard.general
         guard let image = board.data(forType: .init("public.png")) ?? board.data(forType: .tiff) else {
-            error = "剪贴板里没有图片。请复制截图，或直接选择图片文件。"
+            error = tr("剪贴板里没有图片。请复制截图，或直接选择图片文件。")
             return
         }
         start { try ImportInput.recognize(image) }

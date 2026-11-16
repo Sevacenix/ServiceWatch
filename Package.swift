@@ -7,7 +7,7 @@ let package = Package(
     products: [.executable(name: "ServiceWatch", targets: ["ServiceWatch"])],
     targets: [
         .systemLibrary(name: "CSQLite"),
-        .executableTarget(name: "ServiceWatch", dependencies: ["CSQLite"]),
+        .executableTarget(name: "ServiceWatch", dependencies: ["CSQLite"], resources: [.process("Resources")]),
         .testTarget(name: "ServiceWatchTests", dependencies: ["ServiceWatch"], resources: [.copy("Fixtures")])
     ],
     swiftLanguageModes: [.v5]

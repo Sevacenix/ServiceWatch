@@ -31,9 +31,9 @@ enum PriceCalendar {
     }
     static func year(_ date: Date) -> Int { calendar.component(.year, from: date) }
     static func yearWindow(_ year: Int) -> Range<Date> { date(year, 1, 1)..<date(year + 1, 1, 1) }
-    static func label(_ window: Range<Date>) -> String {
+    static func label(_ window: Range<Date>, language: AppLanguage = .simplifiedChinese) -> String {
         let last = calendar.date(byAdding: .day, value: -1, to: window.upperBound)!
-        return "\(ServiceDate.string(window.lowerBound)) 至 \(ServiceDate.string(last))"
+        return L10n.text("\(ServiceDate.string(window.lowerBound)) 至 \(ServiceDate.string(last))", language: language)
     }
 }
 
@@ -92,13 +92,15 @@ struct PriceDelta: Equatable {
         amount = current.amount - reference.amount
         fraction = reference.amount > 0 ? amount / reference.amount : nil
     }
-    var description: String {
-        if amount == 0 { return "持平" }
+    var description: String { displayDescription(language: .simplifiedChinese) }
+
+    func displayDescription(language: AppLanguage) -> String {
+        if amount == 0 { return L10n.label("持平", language: language) }
         let sign = amount > 0 ? "+" : "−"
         let absolute = amount > 0 ? amount : -amount
         let difference = sign + NSDecimalNumber(decimal: absolute).stringValue
         guard let fraction else { return difference }
-        let percent = (fraction > 0 ? fraction : -fraction).formatted(.percent.precision(.fractionLength(0...1)))
-        return "\(difference)（\(sign)\(percent)）"
+        let percent = (fraction > 0 ? fraction : -fraction).formatted(.percent.precision(.fractionLength(0...1)).locale(language.locale))
+        return L10n.text("\(difference)（\(sign)\(percent)）", language: language)
     }
 }

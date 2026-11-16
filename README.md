@@ -2,7 +2,7 @@
 
 在 Mac 上记录订阅、软件授权和续费日期，比较同一套餐的历史价格。授权保存在本机。
 
-ServiceWatch is a native macOS app for tracking subscriptions, software licenses, renewal dates, and observed deal prices. The UI is currently in Simplified Chinese.
+ServiceWatch is a native macOS app for tracking subscriptions, software licenses, renewal dates, and observed deal prices. The interface is available in English and Simplified Chinese.
 
 [下载 / Download](https://github.com/Sevacenix/ServiceWatch/releases) · [数据说明 / Data](docs/DATA.md) · [样例 / Examples](examples/) · [发布说明 / Release notes](RELEASE-NOTES.md)
 
@@ -12,15 +12,16 @@ ServiceWatch is a native macOS app for tracking subscriptions, software licenses
 2. 在空白首页点「添加服务」，填入等级和到期日。也可在「授权导入」选取邮件或截图，核对草稿后保存。
 3. 在「优惠发现」点「刷新全部最新价格」，再从具体报价打开「比价记录」。在「数据源与更新」可开启每日更新。
 4. 侧栏「使用向导」有简明操作入口和虚构样例。
+5. 点主窗口工具栏的地球图标，勾选「跟随系统」「English」或「简体中文」。默认按系统首选语言匹配，不支持的语言使用英文。
 
-Open **续期 Open**, add a service manually or review an imported email or screenshot, then refresh the catalog if you want to compare offers. The built-in guide includes read-only fictional examples. Automatic catalog refresh is opt-in.
+Open **续期 Open**, add a service manually or review an imported email or screenshot, then refresh the catalog if you want to compare offers. The built-in guide includes read-only fictional examples. Automatic catalog refresh is opt-in. Use the globe menu in the main window toolbar to select **System**, **English**, or **简体中文**. The default follows your preferred system languages and falls back to English.
 
 ### 首次打开与 macOS 提示 / First launch on macOS
 
 当前安装包使用 ad-hoc 签名，尚未通过 Apple 公证。下载后可运行以下命令，将输出的哈希与同一发布页的 `SHA256SUMS.txt` 对应行比较。按实际版本和文件类型替换文件名。
 
 ```sh
-shasum -a 256 ServiceWatch-0.1.1-macOS-arm64.dmg
+shasum -a 256 ServiceWatch-0.1.2-macOS-arm64.dmg
 ```
 
 若首次打开时出现「无法验证开发者」或 Apple 无法检查该 App 的提示，先确认文件来自本仓库的发布页且校验值相符。如果你选择信任这份安装包：

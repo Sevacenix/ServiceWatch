@@ -13,17 +13,17 @@ enum ImportInputError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .tooLarge: "文件过大。邮件最多 8 MB，图片最多 20 MB。"
-        case .unsupportedFile: "请选择 .eml 邮件或 PNG、JPEG、HEIC、TIFF 图片。"
-        case .invalidEmail: "没有读到可用的邮件正文。可在邮件中复制正文后粘贴。"
-        case .invalidImage: "无法读取这张图片。请另存为 PNG 或 JPEG 后重试。"
-        case .noText: "没有识别到文字。请使用更清晰的会员或授权截图。"
-        case .duplicate: "该服务已有同名等级。请选择更新现有授权，或修改新等级名称。"
-        case .duplicateService: "已有同名服务。请在保存目标中选择现有服务。"
-        case .chooseTarget: "请选择要更新的授权，或明确选择新增等级。"
-        case .staleTarget: "保存目标已变化，请重新选择并核对。"
-        case .invalidFields: "请填写服务、等级和有效的到期日。"
-        case .preserveExpiry: "已有明确有效期。请核实新日期或保留原记录。"
+        case .tooLarge: tr("文件过大。邮件最多 8 MB，图片最多 20 MB。")
+        case .unsupportedFile: tr("请选择 .eml 邮件或 PNG、JPEG、HEIC、TIFF 图片。")
+        case .invalidEmail: tr("没有读到可用的邮件正文。可在邮件中复制正文后粘贴。")
+        case .invalidImage: tr("无法读取这张图片。请另存为 PNG 或 JPEG 后重试。")
+        case .noText: tr("没有识别到文字。请使用更清晰的会员或授权截图。")
+        case .duplicate: tr("该服务已有同名等级。请选择更新现有授权，或修改新等级名称。")
+        case .duplicateService: tr("已有同名服务。请在保存目标中选择现有服务。")
+        case .chooseTarget: tr("请选择要更新的授权，或明确选择新增等级。")
+        case .staleTarget: tr("保存目标已变化，请重新选择并核对。")
+        case .invalidFields: tr("请填写服务、等级和有效的到期日。")
+        case .preserveExpiry: tr("已有明确有效期。请核实新日期或保留原记录。")
         }
     }
 }

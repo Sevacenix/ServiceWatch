@@ -44,7 +44,7 @@ import Observation
         do {
             snapshot = try await engine.snapshot()
             icons.prefetch(snapshot.products.flatMap { $0.iconURLs ?? [] })
-            if outcome == "尚未更新", let last = snapshot.runs.first { outcome = "\(last.trigger.title) · \(last.status)：\(last.note)" }
+            if outcome == "尚未更新", let last = snapshot.runs.first { outcome = tr("\(L10n.label(last.trigger.title)) · \(L10n.label(last.status))：\(L10n.label(last.note))") }
         }
         catch { self.error = error.localizedDescription }
     }
@@ -75,8 +75,8 @@ import Observation
     }
     func refreshDirectory() async {
         guard let engine, !isUpdating else { return }
-        isUpdating = true; error = nil; progress = "正在获取全部服务目录…"
-        do { try await engine.refreshDirectory(); outcome = "目录已更新；添加时将另行核实具体方案。" }
+        isUpdating = true; error = nil; progress = tr("正在获取全部服务目录…")
+        do { try await engine.refreshDirectory(); outcome = tr("目录已更新；添加时将另行核实具体方案。") }
         catch { self.error = error.localizedDescription }
         await reload(); isUpdating = false
     }
@@ -87,7 +87,7 @@ import Observation
         do {
             let offers = try await engine.refreshProduct(path: path, trigger: trigger)
             await reload()
-            outcome = "\(trigger.title)：已核实\(offers.count)个具体方案。"
+            outcome = tr("\(L10n.label(trigger.title))：已核实\(offers.count)个具体方案。")
             return offers
         } catch { self.error = error.localizedDescription; await reload(); return nil }
     }
@@ -104,7 +104,7 @@ import Observation
         await reload(); isUpdating = false
     }
     func comparison(for offer: CatalogOffer, now: Date = Date()) async throws -> PriceComparison {
-        guard let engine else { throw CatalogError.invalid("优惠数据库不可用。") }
+        guard let engine else { throw CatalogError.invalid(tr("优惠数据库不可用。")) }
         let keys = Set(snapshot.historyGroups.filter { $0.comparisonKey == offer.comparisonKey }.map(\.groupKey))
         return try await engine.comparison(groupKeys: keys.sorted(), currency: offer.currency, now: now)
     }

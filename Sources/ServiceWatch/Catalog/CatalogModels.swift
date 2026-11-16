@@ -45,6 +45,17 @@ struct OfferDuration: Codable, Equatable, Sendable {
     var perpetual = false
     var label: String
     var calculable: Bool { perpetual || months > 0 || days > 0 }
+    var displayLabel: String {
+        guard AppLanguage.current == .english else { return label }
+        if perpetual { return tr("永久使用权 · 所购版本") }
+        if calculable {
+            return [months > 0 ? tr("\(months)个月") : nil, days > 0 ? tr("\(days)天") : nil]
+                .compactMap { $0 }.joined(separator: " + ")
+        }
+        if label.hasPrefix("联名套餐 · 各项有效期需分别确认") { return tr("联名套餐，各项时长分别核实") }
+        if label.hasPrefix("时长待确认 · ") { return tr("时长待确认") }
+        return L10n.label(label)
+    }
     func expiry(start: String) -> String? {
         guard !perpetual, calculable, let date = ServiceDate.parse(start) else { return nil }
         var calendar = Calendar(identifier: .gregorian)
@@ -122,7 +133,11 @@ struct CatalogOffer: Identifiable, Codable, Equatable, Sendable {
     var sourceURL: URL { CatalogSource.url(productPath) }
     var purchaseURL: URL { CatalogSource.url(purchasePath) }
     var priceLabel: String { price.map { "\(currency) \($0)\(unit)" } ?? "价格待更新\(unit)" }
-    var selectorLabel: String { "\(name) · \(shop) · \(priceLabel)" }
+    var displayPrice: String {
+        let displayUnit = L10n.label(unit)
+        return price.map { "\(currency) \($0)\(displayUnit)" } ?? tr("价格待更新\(displayUnit)")
+    }
+    var displaySelector: String { "\(name) · \(L10n.label(shop)) · \(displayPrice)" }
     var groupKey: String {
         let identity = [id, productPath, name, unit, shop, specs, badge, duration.label].joined(separator: "\n")
         return SHA256.hash(data: Data(identity.utf8)).map { String(format: "%02x", $0) }.joined()
@@ -181,9 +196,9 @@ enum CatalogError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalid(let text): text
-        case .http(let code): "优惠站返回 HTTP \(code)，保留最后成功数据。"
-        case .busy: "全目录更新正在进行，请稍后再试。"
-        case .retryAfter(let date): "站点限流，请在 \(date.formatted()) 后再试。"
+        case .http(let code): tr("优惠站返回 HTTP \(code)，保留最后成功数据。")
+        case .busy: tr("全目录更新正在进行，请稍后再试。")
+        case .retryAfter(let date): tr("站点限流，请在 \(date.formatted()) 后再试。")
         }
     }
 }

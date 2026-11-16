@@ -39,7 +39,7 @@ final class CatalogHTTP: CatalogTransport, @unchecked Sendable {
         session = URLSession(configuration: config, delegate: CatalogRedirectPolicy(), delegateQueue: nil)
     }
     func get(_ url: URL, cache: CachedCatalogPage?) async throws -> FetchedCatalogPage {
-        guard CatalogSource.allowed(url) else { throw CatalogError.invalid("拒绝读取非公开目录或站外链接。") }
+        guard CatalogSource.allowed(url) else { throw CatalogError.invalid(tr("拒绝读取非公开目录或站外链接。")) }
         await limit.acquire()
         do {
             try Task.checkCancellation()
@@ -49,7 +49,7 @@ final class CatalogHTTP: CatalogTransport, @unchecked Sendable {
             if let etag = cache?.etag { request.setValue(etag, forHTTPHeaderField: "If-None-Match") }
             if let modified = cache?.modified { request.setValue(modified, forHTTPHeaderField: "If-Modified-Since") }
             let (data, response) = try await session.data(for: request)
-            guard let response = response as? HTTPURLResponse else { throw CatalogError.invalid("优惠站响应无效。") }
+            guard let response = response as? HTTPURLResponse else { throw CatalogError.invalid(tr("优惠站响应无效。")) }
             if response.statusCode == 429 || response.statusCode == 503 {
                 let text = response.value(forHTTPHeaderField: "Retry-After") ?? "300"
                 let formatter = DateFormatter(); formatter.locale = Locale(identifier: "en_US_POSIX"); formatter.timeZone = TimeZone(secondsFromGMT: 0)
@@ -59,13 +59,13 @@ final class CatalogHTTP: CatalogTransport, @unchecked Sendable {
             }
             let result: FetchedCatalogPage
             if response.statusCode == 304 {
-                guard var existing = cache else { throw CatalogError.invalid("站点返回304但没有本地缓存，请稍后重试。") }
+                guard var existing = cache else { throw CatalogError.invalid(tr("站点返回304但没有本地缓存，请稍后重试。")) }
                 existing.etag = response.value(forHTTPHeaderField: "ETag") ?? existing.etag
                 existing.modified = response.value(forHTTPHeaderField: "Last-Modified") ?? existing.modified
                 result = .init(cache: existing, notModified: true)
             } else {
                 guard response.statusCode == 200 else { throw CatalogError.http(response.statusCode) }
-                guard data.count < 3_000_000, let body = String(data: data, encoding: .utf8), !body.isEmpty else { throw CatalogError.invalid("优惠页面不是有效UTF-8文本，保留旧数据。") }
+                guard data.count < 3_000_000, let body = String(data: data, encoding: .utf8), !body.isEmpty else { throw CatalogError.invalid(tr("优惠页面不是有效UTF-8文本，保留旧数据。")) }
                 result = .init(cache: .init(body: body, etag: response.value(forHTTPHeaderField: "ETag"), modified: response.value(forHTTPHeaderField: "Last-Modified")), notModified: false)
             }
             await limit.release()

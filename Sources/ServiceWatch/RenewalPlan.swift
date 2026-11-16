@@ -28,15 +28,20 @@ struct RenewalPlan: Codable, Equatable {
 
     var showsReviewPrompt: Bool { isTracked && remindersEnabled && status == .unverified }
     var allowsLocalReminders: Bool { isTracked && remindersEnabled && status != .disabled }
-    var managementSummary: String {
-        if !isTracked { return "已停止本机跟踪" }
-        if !remindersEnabled && status != .disabled { return "\(status.title) · 本地提醒已关闭" }
-        return status.title
+    func summary(language: AppLanguage) -> String {
+        if !isTracked { return L10n.label("已停止本机跟踪", language: language) }
+        let title = L10n.label(status.title, language: language)
+        if !remindersEnabled && status != .disabled {
+            return L10n.text("\(title) · 本地提醒已关闭", language: language)
+        }
+        return title
     }
     var amountLabel: String { amount.map { currency + " " + $0 } ?? "金额待确认" }
-    var dateLabel: String {
-        guard let date = nextCharge else { return "扣款日期待确认" }
-        return (ServiceDate.days(date).map { $0 < 0 } ?? false) ? "记录日期 \(date)（已过）" : date
+    var dateLabel: String { dateLabel(language: .simplifiedChinese) }
+    func dateLabel(language: AppLanguage) -> String {
+        guard let date = nextCharge else { return L10n.label("扣款日期待确认", language: language) }
+        guard (ServiceDate.days(date) ?? 0) < 0 else { return date }
+        return L10n.text("记录日期 \(date)（已过）", language: language)
     }
     var isValid: Bool {
         guard nextCharge.map({ ServiceDate.parse($0) != nil }) ?? true,

@@ -2,8 +2,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BUILD_NUMBER="2"
-VERSION="0.1.1"
+BUILD_NUMBER="3"
+VERSION="0.1.2"
 APP_NAME="续期 Open"
 BUNDLE_NAME="$APP_NAME.app"
 BUNDLE_ID="com.sevacenix.ServiceWatch.Open"
@@ -30,6 +30,7 @@ cleanup_stage() {
 trap cleanup_stage EXIT
 APP_BUNDLE="$STAGE/$BUNDLE_NAME"
 mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources"
+cp -X Sources/ServiceWatch/Resources/English.json "$APP_BUNDLE/Contents/Resources/English.json"
 cp -X "$BUILD_BINARY" "$APP_BUNDLE/Contents/MacOS/ServiceWatch"
 # Release binaries do not need debug symbols with build machine source paths.
 /usr/bin/strip -S "$APP_BUNDLE/Contents/MacOS/ServiceWatch"

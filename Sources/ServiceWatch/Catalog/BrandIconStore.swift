@@ -41,14 +41,14 @@ private actor BrandIconDownloads: BrandIconFetching {
         session = URLSession(configuration: config, delegate: BrandIconRedirects(), delegateQueue: nil)
     }
     func data(_ url: URL) async throws -> Data {
-        guard BrandIconSource.allowed(url) else { throw CatalogError.invalid("不支持的图标来源。") }
+        guard BrandIconSource.allowed(url) else { throw CatalogError.invalid(tr("不支持的图标来源。")) }
         if active < 2 { active += 1 } else { await withCheckedContinuation { waiting.append($0) } }
         let delay = max(0, nextStart.timeIntervalSinceNow)
         nextStart = Date().addingTimeInterval(delay + 0.15)
         defer { if waiting.isEmpty { active -= 1 } else { waiting.removeFirst().resume() } }
         if delay > 0 { try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000)) }
         let (data, response) = try await session.data(from: url)
-        guard (response as? HTTPURLResponse)?.statusCode == 200, data.count <= 2_000_000 else { throw CatalogError.invalid("图标暂不可用。") }
+        guard (response as? HTTPURLResponse)?.statusCode == 200, data.count <= 2_000_000 else { throw CatalogError.invalid(tr("图标暂不可用。")) }
         return data
     }
 }
@@ -81,7 +81,7 @@ private actor BrandIconDownloads: BrandIconFetching {
         return Self.decode(data)
     }
     func saveCustom(_ data: Data) throws -> String {
-        guard let image = Self.decode(data) else { throw CatalogError.invalid("请选择2MB以内、可读取的图标图片。") }
+        guard let image = Self.decode(data) else { throw CatalogError.invalid(tr("请选择2MB以内、可读取的图标图片。")) }
         let name = "custom-\(UUID().uuidString).image"
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         try data.write(to: folder.appendingPathComponent(name), options: .atomic)
@@ -103,7 +103,7 @@ private actor BrandIconDownloads: BrandIconFetching {
         let task = Task { () -> NSImage? in
             do {
                 let data = try await downloads.data(url)
-                guard let image = Self.decode(data) else { throw CatalogError.invalid("无法读取服务图标。") }
+                guard let image = Self.decode(data) else { throw CatalogError.invalid(tr("无法读取服务图标。")) }
                 try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
                 try data.write(to: file, options: .atomic)
                 images[source] = image

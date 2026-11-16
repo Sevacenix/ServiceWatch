@@ -40,7 +40,7 @@ struct BrandIconView: View {
     private func placeholder(side: CGFloat) -> some View {
         Image(systemName: "app").font(.system(size: side * 0.5)).foregroundStyle(.tertiary)
             .frame(width: side, height: side).background(.quinary, in: RoundedRectangle(cornerRadius: side * 0.2))
-            .help("图标尚未取得；自定义服务可在编辑中导入图标")
+            .help(tr("图标尚未取得；自定义服务可在编辑中导入图标"))
     }
 }
 
@@ -98,7 +98,7 @@ struct PageHeading: View {
 
 struct ExternalOfferLink: View {
     var path: String
-    var title = "查看最新优惠"
+    var title = tr("查看最新优惠")
     var body: some View {
         if let url = URL(string: "https://deals.iplaysoft.com" + path) {
             Link(destination: url) {

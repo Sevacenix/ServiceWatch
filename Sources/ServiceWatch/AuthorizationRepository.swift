@@ -22,9 +22,9 @@ enum AuthorizationStorageError: LocalizedError {
     case unsupportedVersion, invalidRecords, unavailable
     var errorDescription: String? {
         switch self {
-        case .unsupportedVersion: "本地数据版本不兼容，已停止写入以保留原文件。"
-        case .invalidRecords: "数据包含重复标识、无效授权或扣款记录，已保留原文件。"
-        case .unavailable: "原有数据未能读取，暂不能保存。请先处理读取错误。"
+        case .unsupportedVersion: tr("本地数据版本不兼容，已停止写入以保留原文件。")
+        case .invalidRecords: tr("数据包含重复标识、无效授权或扣款记录，已保留原文件。")
+        case .unavailable: tr("原有数据未能读取，暂不能保存。请先处理读取错误。")
         }
     }
 }

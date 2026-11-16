@@ -1,11 +1,14 @@
-# 续期 · ServiceWatch 0.1.1
+# 续期 · ServiceWatch 0.1.2
 
 适用于 Apple Silicon Mac，macOS 14 或更新版本。
 
-- 从本版起采用 [MIT 许可](https://github.com/Sevacenix/ServiceWatch/blob/v0.1.1/LICENSE)，版权署名为 `Copyright (c) 2026 Sevacenix`。App 的「关于续期」显示许可和署名，安装包内随附完整许可文本。
-- [v0.1.0](https://github.com/Sevacenix/ServiceWatch/releases/tag/v0.1.0) 继续采用发布时的 0BSD 许可。
+- 主界面、授权编辑与导入、优惠发现、比价和使用向导支持英文和简体中文。默认跟随系统首选语言，找不到支持的语言时使用英文。在主窗口工具栏的地球菜单可以直接切换，所选语言会保存。
+- 已有授权和价格历史沿用原数据目录。商家原文和个人记录按原文显示。
+- 「关于续期」显示 MIT 许可和 `Copyright (c) 2026 Sevacenix`，安装包随附[完整许可](https://github.com/Sevacenix/ServiceWatch/blob/v0.1.2/LICENSE)。
 
-The MIT license applies starting with v0.1.1, with copyright attributed to Sevacenix. The About panel displays the notice, and the app bundle includes the full license text. The original v0.1.0 release remains under 0BSD.
+ServiceWatch now supports English and Simplified Chinese. It follows your preferred system languages by default and falls back to English. Select a language from the globe menu in the main window toolbar. Your choice persists across launches. Existing licenses and price history stay in the same data directory. Merchant content and personal entries retain their original text.
+
+The About panel displays the MIT license and the Sevacenix copyright. The full license is included in the app bundle.
 
 ## 安装与首次打开 / Installation and first launch
 

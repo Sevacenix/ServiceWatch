@@ -8,12 +8,12 @@ final class CatalogDatabase {
     init(url: URL) throws {
         try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
         guard sqlite3_open_v2(url.path, &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, nil) == SQLITE_OK else {
-            throw CatalogError.invalid("无法打开优惠数据库。")
+            throw CatalogError.invalid(tr("无法打开优惠数据库。"))
         }
         sqlite3_busy_timeout(db, 5000)
         try exec("PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;")
         let version = try rows("PRAGMA user_version").first?["user_version"] ?? "0"
-        guard ["0", "1"].contains(version) else { throw CatalogError.invalid("优惠数据库版本不兼容，未覆盖原文件。") }
+        guard ["0", "1"].contains(version) else { throw CatalogError.invalid(tr("优惠数据库版本不兼容，未覆盖原文件。")) }
         try exec("""
         CREATE TABLE IF NOT EXISTS products(path TEXT PRIMARY KEY, payload TEXT NOT NULL, listed INTEGER NOT NULL DEFAULT 1);
         CREATE TABLE IF NOT EXISTS offers(id TEXT PRIMARY KEY, product_path TEXT NOT NULL, group_key TEXT NOT NULL, payload TEXT NOT NULL, active INTEGER NOT NULL);
@@ -27,7 +27,7 @@ final class CatalogDatabase {
         try hydrateIconsFromCachedDirectory()
     }
     deinit { sqlite3_close(db) }
-    private func failure() -> CatalogError { .invalid("优惠数据库写入失败：\(String(cString: sqlite3_errmsg(db)))") }
+    private func failure() -> CatalogError { .invalid(tr("优惠数据库写入失败：\(String(cString: sqlite3_errmsg(db)))")) }
     private func exec(_ sql: String) throws { guard sqlite3_exec(db, sql, nil, nil, nil) == SQLITE_OK else { throw failure() } }
     private func statement(_ sql: String, _ params: [String?]) throws -> OpaquePointer {
         var stmt: OpaquePointer?
@@ -108,7 +108,7 @@ final class CatalogDatabase {
         }
     }
     func saveProduct(_ product: CatalogProduct, offers: [CatalogOffer], runID: String, page: FetchedCatalogPage) throws {
-        guard !offers.isEmpty else { throw CatalogError.invalid("空报价不覆盖已有方案。") }
+        guard !offers.isEmpty else { throw CatalogError.invalid(tr("空报价不覆盖已有方案。")) }
         try transaction {
             let existing = try rows("SELECT payload FROM products WHERE path=?", [product.path]).first?["payload"]
                 .map { try decode(CatalogProduct.self, $0) }

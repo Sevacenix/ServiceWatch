@@ -73,23 +73,33 @@ struct ServiceChange: Identifiable, Codable {
     var recordedAt = Date()
     var before: Service?
     var after: Service
-    var summary: String {
+    var summary: String { summary(language: .simplifiedChinese) }
+
+    func summary(language: AppLanguage) -> String {
+        func validity(_ entitlement: Entitlement) -> String {
+            if entitlement.perpetual { return L10n.label("永久授权", language: language) }
+            return entitlement.expires ?? L10n.label("待确认", language: language)
+        }
+
         guard let before else {
-            return after.entitlements.contains { $0.importOrigin != nil } ? "导入添加服务与授权" : "手动添加服务与授权"
+            let title = after.entitlements.contains { $0.importOrigin != nil } ? "导入添加服务与授权" : "手动添加服务与授权"
+            return L10n.label(title, language: language)
         }
         let parts = after.entitlements.compactMap { current -> String? in
             guard let old = before.entitlements.first(where: { $0.id == current.id }) else {
-                return "新增 \(current.tier)：\(current.perpetual ? "永久授权" : current.expires ?? "待确认")"
+                return L10n.text("新增 \(current.tier)：\(validity(current))", language: language)
             }
             guard old.tier != current.tier || old.expires != current.expires || old.perpetual != current.perpetual else { return nil }
-            return "\(current.tier)：\(old.perpetual ? "永久授权" : old.expires ?? "待确认") → \(current.perpetual ? "永久授权" : current.expires ?? "待确认")"
+            return L10n.text("\(current.tier)：\(validity(old)) → \(validity(current))", language: language)
         }
         var descriptions = parts
         if before.renewalPlan != after.renewalPlan, let plan = after.renewalPlan {
-            descriptions.append("自动扣款：\(plan.managementSummary)")
+            descriptions.append(L10n.text("自动扣款：\(plan.summary(language: language))", language: language))
         }
-        if before.customIcon != after.customIcon { descriptions.append("更新服务图标") }
-        return descriptions.isEmpty ? "更新服务资料或主要授权" : descriptions.joined(separator: "；")
+        if before.customIcon != after.customIcon { descriptions.append(L10n.label("更新服务图标", language: language)) }
+        return descriptions.isEmpty
+            ? L10n.label("更新服务资料或主要授权", language: language)
+            : descriptions.joined(separator: L10n.label("；", language: language))
     }
 }
 

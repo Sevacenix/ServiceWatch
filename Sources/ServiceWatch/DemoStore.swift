@@ -32,7 +32,7 @@ import Observation
             selectedID = services.first?.id
         } catch {
             storageIssue = error.localizedDescription
-            message = "读取授权数据失败：\(error.localizedDescription)\n原文件未被覆盖。\n\(repository.fileURL.path)"
+            message = tr("读取授权数据失败：\(error.localizedDescription)\n原文件未被覆盖。\n\(repository.fileURL.path)")
         }
     }
     var selectedService: Service? { services.first { $0.id == selectedID } }
@@ -73,11 +73,12 @@ import Observation
             }
         }.count
     }
-    var nextExpiryNote: String {
+    var nextExpiryNote: String { expiryNote(language: .simplifiedChinese) }
+    func expiryNote(language: AppLanguage) -> String {
         let days = services.filter { $0.paid && !$0.example }.flatMap(\.entitlements)
             .filter { !$0.perpetual }.compactMap { ServiceDate.days($0.expires) }
-        if let next = days.filter({ $0 >= 0 }).min() { return "最近授权到期还有 \(next) 天" }
-        return days.contains(where: { $0 < 0 }) ? "有授权已到期，请查看详情" : "暂无明确到期日"
+        if let next = days.filter({ $0 >= 0 }).min() { return L10n.text("最近授权到期还有 \(next) 天", language: language) }
+        return L10n.label(days.contains(where: { $0 < 0 }) ? "有授权已到期，请查看详情" : "暂无明确到期日", language: language)
     }
     var filtered: [Service] {
         services.filter { service in
